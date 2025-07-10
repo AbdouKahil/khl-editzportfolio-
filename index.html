@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHL EDITZ - Professional Video Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        section {
+            min-height: 100vh;
+            padding: 100px 10% 50px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 50px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            width: 100%;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: #fff;
+            animation: shine 2s infinite;
+            box-shadow: 0 0 10px #fff;
+        }
+        
+        @keyframes shine {
+            0% { opacity: 0.5; width: 50px; }
+            50% { opacity: 1; width: 150px; }
+            100% { opacity: 0.5; width: 50px; }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: transparent;
+            transition: all 0.3s ease;
+            height: 60px;
+        }
+        
+        nav.scrolled {
+            background-color: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: clamp(1.5rem, 3vw, 1.8rem);
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            font-family: 'UnifrakturMaguntia', cursive;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px #fff;
+            transition: all 0.3s;
+        }
+        
+        .logo:hover {
+            text-shadow: 0 0 20px #fff;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            position: relative;
+            padding: 5px 10px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            text-shadow: 0 0 10px #fff;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #fff;
+            transition: width 0.3s;
+            box-shadow: 0 0 5px #fff;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 101;
+        }
+        
+        .hamburger div {
+            width: 25px;
+            height: 2px;
+            background: #fff;
+            margin: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px #fff;
+        }
+        
+        /* Hero Section */
+        #hero {
+            height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.7;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+            z-index: 1;
+        }
+        
+        .highlight {
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+            font-weight: bold;
+        }
+        
+        /* t Section */
+        #about {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .about-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 50px;
+        }
+        
+        .about-content {
+            width: 60%;
+        }
+        
+        .about-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #ccc;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+        }
+        
+        .about-image {
+            width: clamp(250px, 30vw, 350px);
+            height: clamp(250px, 30vw, 350px);
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+            border: 2px solid #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Work ples Section - Desktop */
+        #work {
+            background-color: #111;
+            align-items: center;
+            padding-bottom: 100px;
+        }
+        
+        .video-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 30%;
+            min-width: 300px;
+            padding-bottom: 16.875%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 5px;
+            transition: all 0.3s;
+            border: 1px solid #333;
+        }
+        
+        .video-container:hover {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Work Samples Section - Mobile Swiper */
+        .mobile-swiper {
+            display: none;
+            width: 100%;
+            padding: 30px 0;
+        }
+        
+        .swiper-slide {
+            background-position: center;
+            background-size: cover;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .swiper-slide iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        /* Testimonials Section - Desktop */
+        #testimonials {
+            background-color: #111;
+            align-items: center;
+            padding-bottom: 100px;
+        }
+        
+        .testimonial-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .testimonial-card {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 5px;
+            width: 30%;
+            min-width: 300px;
+            transition: all 0.3s;
+            border: 1px solid #444;
+        }
+        
+        .testimonial-card:hover {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .testimonial-content {
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #ccc;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .client-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .client-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+            border: 1px solid #fff;
+        }
+        
+        .client-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .client-name {
+            font-weight: bold;
+            color: #fff;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .client-role {
+            font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+            color: #aaa;
+        }
+        
+        /* Testimonials Section - Mobile Swiper */
+        .testimonial-swiper {
+            display: none;
+            width: 100%;
+            padding: 30px 0;
+        }
+        
+        /* Services Section */
+        #services {
+            align-items: center;
+        }
+        
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+            width: 100%;
+        }
+        
+        .service-card {
+            background-color: #111;
+            padding: 30px;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #333;
+        }
+        
+        .service-card:hover {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .service-icon {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #fff;
+        }
+        
+        .service-card h3 {
+            margin-bottom: 15px;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            color: #fff;
+        }
+        
+        .service-card p {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .software-logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            width: 100%;
+        }
+        
+        .software-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s;
+            width: 100px;
+        }
+        
+        .software-logo:hover {
+            transform: scale(1.1);
+        }
+        
+        .software-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 0 5px #fff;
+        }
+        
+        .software-logo span {
+            color: #aaa;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            text-align: center;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px 10%;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .footer-logo {
+            font-size: clamp(1.5rem, 3vw, 1.8rem);
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'UnifrakturMaguntia', cursive;
+            text-shadow: 0 0 10px #fff;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .social-links a {
+            color: #aaa;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: #fff;
+        }
+        
+        .copyright {
+            color: #666;
+            font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+            margin-top: 30px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-links {
+                position: fixed;
+                top: 60px;
+                right: -100%;
+                width: 100%;
+                height: calc(100vh - 60px);
+                background-color: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 30px;
+                transition: right 0.5s ease;
+                z-index: 100;
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .hamburger.active div:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+            
+            .hamburger.active div:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .hamburger.active div:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+            
+            .about-container {
+                flex-direction: column-reverse;
+            }
+            
+            .about-content {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            section {
+                padding: 80px 5% 30px;
+            }
+            
+            .about-image {
+                margin-bottom: 30px;
+            }
+            
+            /* Show swiper and hide grid on mobile */
+            .video-grid,
+            .testimonial-grid {
+                display: none;
+            }
+            
+            .mobile-swiper,
+            .testimonial-swiper {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .swiper-slide {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo">KHL EDITZ</a>
+        <div class="nav-links">
+            <a href="#hero" class="active">Home</a>
+            <a href="#work">Work</a>
+            <a href="#about">About</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#services">Services</a>
+        </div>
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="hero">
+        <video autoplay muted loop class="hero-video">
+            <source src="assets/bg video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <h1><span class="highlight">LET'S</span> MAKE <span class="highlight">YOUR</span> VIDEOS <span class="highlight">MORE</span> COOLER</h1>
+        </div>
+    </section>
+    
+    <!-- Work Samples Section -->
+    <section id="work">
+        <h2>My Work Samples</h2>
+        
+        <!-- Desktop Grid -->
+        <div class="video-grid">
+            <div class="video-container">
+                <iframe src="assets/samples/s1.mp4" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="assets/samples/s2.mp4" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="assets/samples/s3.mp4" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="assets/samples/s4.mp4" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="assets/samples/s5.mp4" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="assets/samples/s6.mp4" allowfullscreen></iframe>
+            </div>
+        </div>
+        
+        <!-- Mobile Swiper -->
+        <div class="mobile-swiper swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <iframe src="assets/samples/s1.mp4" allowfullscreen></iframe>
+                </div>
+                <div class="swiper-slide">
+                    <iframe src="assets/samples/s2.mp4" allowfullscreen></iframe>
+                </div>
+                <div class="swiper-slide">
+                    <iframe src="assets/samples/s3.mp4" allowfullscreen></iframe>
+                </div>
+                <div class="swiper-slide">
+                    <iframe src="assets/samples/s4.mp4" allowfullscreen></iframe>
+                </div>
+                <div class="swiper-slide">
+                    <iframe src="assets/samples/s5.mp4" allowfullscreen></iframe>
+                </div>
+                <div class="swiper-slide">
+                    <iframe src="assets/samples/s6.mp4" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="about-container">
+            <div class="about-content">
+                <p>Hi, I'm Abdesselam Kahil, a professional video editor with over 5 years of experience in creating stunning visual content. I specialize in transforming raw footage into compelling stories that captivate audiences.</p>
+                <p>My journey in video editing began when I was just 15 years old, and since then, I've worked with numerous clients across various industries, helping them bring their visions to life through the power of video.</p>
+                <p>What sets me apart is my attention to detail, creative approach, and commitment to delivering high-quality work that exceeds expectations. Whether it's a corporate video, music video, or short film, I pour my passion into every project.</p>
+            </div>
+            <div class="about-image">
+                <img src="assets/hero.png" alt="KHL EDITZ">
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section id="testimonials">
+        <h2>Client Feedback</h2>
+        
+        <!-- Desktop Grid -->
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    Abdou transformed our corporate video into a masterpiece. His attention to detail and creative vision brought our brand story to life in ways we couldn't have imagined.
+                </div>
+                <div class="client-info">
+                    <div class="client-image">
+                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Client">
+                    </div>
+                    <div>
+                        <div class="client-name">Sarah Johnson</div>
+                        <div class="client-role">Marketing Director, TechCorp</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    Working with Abdesselam was an absolute pleasure. He took my rough footage and turned it into a cinematic music video that perfectly captured the emotion of my song.
+                </div>
+                <div class="client-info">
+                    <div class="client-image">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client">
+                    </div>
+                    <div>
+                        <div class="client-name">Michael Rodriguez</div>
+                        <div class="client-role">Independent Musician</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    Abdou's editing skills are next level. He consistently delivers high-quality work on tight deadlines. Our YouTube channel's growth is largely thanks to his engaging video content.
+                </div>
+                <div class="client-info">
+                    <div class="client-image">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Client">
+                    </div>
+                    <div>
+                        <div class="client-name">Emily Chen</div>
+                        <div class="client-role">Content Creator</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Swiper -->
+        <div class="testimonial-swiper swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            KHL transformed our corporate video into a masterpiece. His attention to detail and creative vision brought our brand story to life in ways we couldn't have imagined.
+                        </div>
+                        <div class="client-info">
+                            <div class="client-image">
+                                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Client">
+                            </div>
+                            <div>
+                                <div class="client-name">Sarah Johnson</div>
+                                <div class="client-role">Marketing Director, TechCorp</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            Working with KHL was an absolute pleasure. He took my rough footage and turned it into a cinematic music video that perfectly captured the emotion of my song.
+                        </div>
+                        <div class="client-info">
+                            <div class="client-image">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client">
+                            </div>
+                            <div>
+                                <div class="client-name">Michael Rodriguez</div>
+                                <div class="client-role">Independent Musician</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            KHL's editing skills are next level. He consistently delivers high-quality work on tight deadlines. Our YouTube channel's growth is largely thanks to his engaging video content.
+                        </div>
+                        <div class="client-info">
+                            <div class="client-image">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Client">
+                            </div>
+                            <div>
+                                <div class="client-name">Emily Chen</div>
+                                <div class="client-role">Content Creator</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    
+    <!-- Services Section -->
+    <section id="services">
+        <h2>My Services</h2>
+        <div class="services-container">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>Video Editing</h3>
+                <p>Professional editing of your raw footage into polished, engaging videos with perfect pacing, transitions, and effects.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>Music Videos</h3>
+                <p>Creative editing for music videos that sync perfectly with the rhythm and enhance the emotional impact of your music.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-ad"></i>
+                </div>
+                <h3>Commercials</h3>
+                <p>Attention-grabbing commercial videos that effectively communicate your brand message and drive conversions.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-photo-video"></i>
+                </div>
+                <h3>Color Grading</h3>
+                <p>Professional color correction and grading to give your videos a cinematic look and consistent tone.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>Visual Effects</h3>
+                <p>Adding stunning visual effects, motion graphics, and animations to make your videos stand out.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-vr-cardboard"></i>
+                </div>
+                <h3>Social Media Content</h3>
+                <p>Optimized video content for Instagram, TikTok, YouTube Shorts, and other social platforms.</p>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 50px;">Software I Use</h2>
+        <div class="software-logos">
+            <div class="software-logo">
+                <div class="software-icon"><i class="fab fa-p"></i></div>
+                <span> Adobe Premiere Pro</span>
+            </div>
+            <div class="software-logo">
+                <div class="software-icon"><i class="fab fa-a"></i></div>
+                <span>After Effects</span>
+            </div>
+            <div class="software-logo">
+                <div class="software-icon"><i class="fas fa-video"></i></div>
+                <span>DaVinci Resolve</span>
+            </div>
+            <div class="software-logo">
+                <div class="software-icon"><i class="fab fa-p"></i></div>
+                <span>Photoshop</span>
+            </div>
+            <div class="software-logo">
+                <div class="software-icon"><i class="fas fa-apple-alt"></i></div>
+                <span>Final Cut Pro</span>
+            </div>
+            <div class="software-logo">
+                <div class="software-icon"><i class="fas fa-cube"></i></div>
+                <span>Cinema 4D</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <a href="#" class="footer-logo">KHL EDITZ</a>
+            <div class="footer-links">
+                <a href="#hero">Home</a>
+                <a href="#work">Work</a>
+                <a href="#about">About</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#services">Services</a>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-behance"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 KHL EDITZ. All Rights Reserved.
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Hamburger menu
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        hamburger.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // Initialize Swipers only on mobile devices
+        function initSwipers() {
+            if (window.innerWidth <= 768) {
+                // Work Samples Swiper
+                const workSwiper = new Swiper('.mobile-swiper', {
+                    slidesPerView: 'auto',
+                    spaceBetween: 30,
+                    centeredSlides: true,
+                    pagination: {
+                        el: '.mobile-swiper .swiper-pagination',
+                        clickable: true,
+                    },
+                });
+                
+                // Testimonials Swiper
+                const testimonialSwiper = new Swiper('.testimonial-swiper', {
+                    slidesPerView: 'auto',
+                    spaceBetween: 30,
+                    centeredSlides: true,
+                    pagination: {
+                        el: '.testimonial-swiper .swiper-pagination',
+                        clickable: true,
+                    },
+                });
+            }
+        }
+
+        // Initialize swipers on load
+        document.addEventListener('DOMContentLoaded', initSwipers);
+        
+        // Reinitialize swipers on window resize
+        window.addEventListener('resize', function() {
+            // Destroy existing swipers if they exist
+            if (typeof workSwiper !== 'undefined') {
+                workSwiper.destroy();
+            }
+            if (typeof testimonialSwiper !== 'undefined') {
+                testimonialSwiper.destroy();
+            }
+            
+            // Reinitialize
+            initSwipers();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
